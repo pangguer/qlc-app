@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>福彩七乐彩</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'PingFang SC','Microsoft YaHei','Helvetica Neue',sans-serif;
+  background:linear-gradient(145deg,#120820 0%,#1a0a30 40%,#0d0516 100%);
+  min-height:100vh;padding:12px;
+  background-attachment:fixed;
+}
+/* 微光粒子背景 */
+body::before{
+  content:'';position:fixed;top:0;left:0;right:0;bottom:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20px 30px, rgba(255,215,0,.3), transparent),
+    radial-gradient(1px 1px at 60px 80px, rgba(255,215,0,.2), transparent),
+    radial-gradient(1px 1px at 120px 40px, rgba(255,255,255,.15), transparent),
+    radial-gradient(1px 1px at 180px 120px, rgba(255,215,0,.15), transparent),
+    radial-gradient(1px 1px at 250px 60px, rgba(255,200,100,.2), transparent),
+    radial-gradient(1px 1px at 140px 190px, rgba(255,215,0,.1), transparent);
+  background-size:400px 260px;
+  pointer-events:none;z-index:0;opacity:0.6;
+}
+
+.phone{
+  max-width:400px;margin:0 auto;
+  background:linear-gradient(180deg,rgba(40,20,15,0.92) 0%,rgba(30,12,10,0.95) 100%);
+  border-radius:24px;padding:16px;
+  box-shadow:0 10px 60px rgba(106,27,154,0.15),inset 0 1px 0 rgba(206,147,216,0.06);
+  position:relative;overflow:hidden;z-index:1;
+}
+.phone::before{
+  content:'';position:absolute;top:0;left:16px;right:16px;
+  height:3px;
+  background:linear-gradient(90deg,transparent,rgba(206,147,216,0.6),#CE93D8,rgba(206,147,216,0.6),transparent);
+  border-radius:2px;
+}
+.phone::after{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(ellipse at 50% 0,rgba(154,39,178,0.03) 0%,transparent 60%);
+  pointer-events:none;
+}
+
+.header{text-align:center;padding:16px 0 12px;position:relative;z-index:1;}
+.header h1{
+  font-size:28px;font-weight:900;
+  background:linear-gradient(135deg,#CE93D8,#9C27B0,#6A1B9A);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:5px;
+  text-shadow:0 0 40px rgba(154,39,178,0.2);
+}
+.header .subtitle{
+  font-size:11px;
+  background:linear-gradient(90deg,#CE93D8,#9C27B0,#CE93D8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:8px;margin-top:2px;font-weight:600;
+}
+.header::after{content:'✦';display:block;color:#CE93D8;font-size:14px;margin-top:6px;opacity:0.5;}
+
+.section{
+  background:rgba(255,255,255,0.03);
+  border-radius:16px;padding:16px;margin-bottom:12px;
+  box-shadow:0 2px 20px rgba(0,0,0,0.25);
+  border:1px solid rgba(206,147,216,0.06);
+  position:relative;z-index:1;
+}
+.section-title{
+  font-size:13px;font-weight:700;
+  background:linear-gradient(90deg,#CE93D8,#9C27B0);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:6px;
+}
+.section-title .icon{
+  width:20px;height:20px;
+  background:linear-gradient(135deg,#9C27B0,#6A1B9A);
+  border-radius:5px;display:flex;align-items:center;justify-content:center;
+  color:#CE93D8;font-size:10px;
+}
+
+/* ====== 玩法规则页面 ====== */
+.rule-link{
+  position:absolute;top:16px;right:16px;
+  font-size:11px;font-weight:600;
+  color:rgba(206,147,216,0.5);
+  padding:4px 10px;
+  border:1px solid rgba(206,147,216,0.12);
+  border-radius:8px;
+  cursor:pointer;
+  transition:all 0.15s;
+  z-index:5;
+}
+.rule-link{
+  -webkit-tap-highlight-color:transparent;
+  outline:none;
+}
+.rule-link:active{
+  background:rgba(206,147,216,0.08);
+  color:#CE93D8;
+}
+
+.rule-page{
+  display:none;
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  z-index:10000;
+  background:linear-gradient(180deg,rgba(20,8,30,0.98) 0%,rgba(12,5,20,0.98) 100%);
+  overflow-y:auto;
+  padding:12px;
+  padding-top:48px;
+  -webkit-overflow-scrolling:touch;
+}
+.rule-page.show{display:block;}
+.rule-page::-webkit-scrollbar{width:3px;}
+.rule-page::-webkit-scrollbar-thumb{background:rgba(206,147,216,0.15);border-radius:2px;}
+.rule-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(206,147,216,0.06);
+  margin-bottom:16px;
+}
+.rule-title{
+  font-size:18px;font-weight:800;
+  background:linear-gradient(135deg,#CE93D8,#9C27B0);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.rule-close{
+  font-size:20px;color:rgba(206,147,216,0.4);
+  padding:4px 10px;cursor:pointer;
+  border-radius:6px;
+  transition:all 0.12s;
+}
+.rule-close:active{background:rgba(255,215,0,0.1);color:#CE93D8;outline:none;-webkit-tap-highlight-color:transparent;}
+.rule-block{margin-bottom:18px;}
+.rule-subtitle{
+  font-size:14px;font-weight:700;
+  color:#CE93D8;margin-bottom:8px;
+  display:flex;align-items:center;gap:8px;
+}
+.rule-subtitle::before{
+  content:'✦';font-size:10px;color:#9C27B0;
+}
+.rule-text{
+  font-size:13px;
+  color:rgba(255,255,255,0.7);
+  line-height:1.8;
+  padding-left:18px;
+}
+.rule-text strong{
+  color:rgba(206,147,216,0.9);
+  font-weight:700;
+}
+.rule-text .hl-red{color:#CE93D8;font-weight:700;}
+.rule-text .hl-blue{color:#42A5F5;font-weight:700;}
+.rule-table{
+  width:100%;margin:8px 0 4px 18px;
+  border-collapse:collapse;
+  font-size:12px;
+}
+.rule-table th,.rule-table td{
+  border:1px solid rgba(255,215,0,0.1);
+  padding:5px 8px;
+  text-align:center;
+  color:rgba(255,255,255,0.7);
+}
+.rule-table th{
+  color:#CE93D8;
+  background:rgba(255,215,0,0.05);
+  font-weight:700;
+}
+.rule-table .prize-1{color:#CE93D8;font-weight:700;}
+.rule-table .prize-2{color:#B39DDB;font-weight:700;}
+.rule-table .prize-3{color:#9575CD;}
+.rule-table .prize-4{color:#7E57C2;}
+.rule-table .prize-5,.rule-table .prize-6,.rule-table .prize-7{color:rgba(255,255,255,0.8);}
+
+/* ===== 3D球体核心样式 ===== */
+.balls-row{
+  display:flex;gap:6px;justify-content:center;align-items:center;
+  margin-bottom:14px;flex-wrap:nowrap;
+  perspective:800px;
+}
+.ball{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:800;color:white;
+  position:relative;
+  transform-style:preserve-3d;
+  box-shadow:
+    inset -4px -4px 8px rgba(0,0,0,0.35),
+    inset 4px 4px 8px rgba(255,255,255,0.25),
+    0 4px 16px rgba(0,0,0,0.3);
+  animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+/* 球体高光 */
+.ball::before{
+  content:'';position:absolute;top:4px;left:7px;
+  width:14px;height:9px;
+  background:radial-gradient(ellipse, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 60%, transparent 100%);
+  border-radius:50%;transform:rotate(-25deg);
+}
+/* 底部环境反射 */
+.ball::after{
+  content:'';position:absolute;bottom:4px;right:6px;
+  width:8px;height:4px;
+  background:radial-gradient(ellipse, rgba(255,255,255,0.12) 0%, transparent 100%);
+  border-radius:50%;transform:rotate(20deg);
+}
+
+.ball-purple{
+  background:radial-gradient(circle at 35% 30%, #CE93D8 0%, #9C27B0 35%, #6A1B9A 75%, #38006b 100%);
+  box-shadow:
+    inset -4px -4px 8px rgba(0,0,0,0.4),
+    inset 4px 4px 8px rgba(255,255,255,0.15),
+    0 4px 20px rgba(106,27,154,0.3);
+}
+.ball-blue{
+  background:radial-gradient(circle at 35% 30%, #42A5F5 0%, #1565C0 35%, #0D47A1 75%, #002171 100%);
+  box-shadow:
+    inset -4px -4px 8px rgba(0,0,0,0.4),
+    inset 4px 4px 8px rgba(255,255,255,0.15),
+    0 4px 20px rgba(21,101,192,0.3);
+}
+.ball-plus{
+  display:flex;align-items:center;justify-content:center;
+  color:#CE93D8;font-size:18px;font-weight:300;width:16px;flex-shrink:0;
+  text-shadow:0 0 12px rgba(206,147,216,0.3);
+}
+
+/* ===== 抖动动画 ===== */
+.ball.shake{
+  animation:shake3d 0.6s cubic-bezier(0.36,0.07,0.19,0.97) both;
+}
+@keyframes shake3d{
+  0%,100%{transform:translateX(0) rotate(0deg) scale(1);}
+  10%{transform:translateX(-3px) rotate(-3deg) scale(1.02);}
+  20%{transform:translateX(3px) rotate(3deg) scale(0.98);}
+  30%{transform:translateX(-3px) rotate(-2deg) scale(1.01);}
+  40%{transform:translateX(3px) rotate(2deg) scale(0.99);}
+  50%{transform:translateX(-2px) rotate(-1deg) scale(1);}
+  60%{transform:translateX(2px) rotate(1deg) scale(0.99);}
+  70%{transform:translateX(-1px) rotate(-0.5deg) scale(1);}
+  80%{transform:translateX(1px) rotate(0.5deg) scale(1);}
+  90%{transform:translateX(-0.5px) rotate(-0.3deg) scale(1);}
+}
+
+/* ===== 弹入动画 ===== */
+@keyframes popIn{
+  0%{transform:scale(0) rotate(-180deg);opacity:0;}
+  60%{transform:scale(1.15) rotate(10deg);opacity:1;}
+  100%{transform:scale(1) rotate(0deg);opacity:1;}
+}
+
+/* 分享按钮 */
+.btn-row{
+  display:flex;gap:8px;margin-top:8px;
+}
+.share-btn{
+  flex:1;padding:10px;border:none;border-radius:12px;
+  font-size:13px;font-weight:600;
+  background:rgba(206,147,216,0.06);
+  color:#CE93D8;
+  border:1px solid rgba(255,215,0,0.1);
+  cursor:pointer;transition:all 0.12s;
+}
+.share-btn:active{transform:translateY(1px);}
+.count-text{
+  text-align:center;font-size:11px;color:rgba(206,147,216,0.3);
+  margin-top:6px;
+}
+
+.gen-btn{
+  display:block;width:100%;padding:12px;border:none;border-radius:12px;
+  font-size:15px;font-weight:700;
+  background:linear-gradient(180deg,rgba(156,39,176,0.3) 0%,rgba(106,27,154,0.5) 50%,rgba(74,20,140,0.6) 100%);
+  color:#CE93D8;
+  box-shadow:
+    0 4px 20px rgba(156,39,176,0.2),
+    0 2px 0 rgba(0,0,0,0.25) inset,
+    0 -1px 0 rgba(255,215,0,0.1) inset;
+  letter-spacing:2px;
+  cursor:pointer;transition:all 0.12s;
+  position:relative;overflow:hidden;
+  text-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+.gen-btn::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(206,147,216,0.06),transparent);
+  transition:left 0.5s;
+}
+.gen-btn:hover::before{left:100%;}
+.gen-btn:active{transform:translateY(1px);box-shadow:0 2px 10px rgba(156,39,176,0.15),0 1px 0 rgba(0,0,0,0.2) inset,0 -1px 0 rgba(206,147,216,0.08) inset;}
+.gen-btn:disabled{opacity:0.6;}
+
+/* 开奖和查询公用行 */
+.period-row{
+  display:block;text-align:center;padding:6px 0;
+  border-bottom:1px solid rgba(255,215,0,0.04);
+}
+.period-row:last-child{border-bottom:none;}
+.period-label{
+  font-size:11px;font-weight:700;
+  color:#CE93D8;margin-bottom:4px;letter-spacing:3px;
+  text-shadow:0 0 20px rgba(206,147,216,0.15);
+}
+.period-balls{
+  display:flex;align-items:center;justify-content:center;gap:2px;
+}
+.period-balls .ball{
+  width:24px;height:24px;font-size:10px;
+}
+.period-balls .ball::before{
+  top:2px;left:4px;width:8px;height:5px;
+}
+.period-balls .ball::after{display:none;}
+.period-balls .ball-plus{font-size:12px;width:12px;}
+
+/* 滑动滚动条样式 */
+#latestPeriods::-webkit-scrollbar{
+  width:3px;
+}
+#latestPeriods::-webkit-scrollbar-track{
+  background:transparent;
+}
+#latestPeriods::-webkit-scrollbar-thumb{
+  background:rgba(206,147,216,0.15);
+  border-radius:2px;
+}
+
+.loading-text,.empty-text{
+  text-align:center;padding:14px 0;font-size:13px;
+  color:rgba(206,147,216,0.3);
+}
+
+.search-row{
+  display:flex;gap:8px;
+}
+.search-input{
+  flex:1;padding:10px 14px;border:2px solid rgba(206,147,216,0.08);
+  border-radius:10px;font-size:15px;outline:none;
+  background:rgba(255,255,255,0.04);
+  color:rgba(255,255,255,0.8);
+  transition:border 0.2s;
+}
+.search-input:focus{border-color:#9C27B0;}
+.search-input::placeholder{color:rgba(255,255,255,0.15);}
+.search-btn{
+  padding:10px 18px;border:none;border-radius:10px;
+  background:rgba(206,147,216,0.08);
+  color:#CE93D8;border:1px solid rgba(206,147,216,0.08);
+  font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;
+}
+.search-btn:active{transform:translateY(1px);}
+
+.search-result{
+  margin-top:10px;padding:10px;border-radius:10px;
+  background:rgba(255,215,0,0.02);text-align:center;font-size:13px;
+  color:rgba(206,147,216,0.4);
+  min-height:40px;
+}
+
+.footer{
+  text-align:center;padding:10px 0 4px;
+  font-size:10px;
+  background:linear-gradient(90deg,#CE93D8,#9C27B0,#CE93D8);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:2px;opacity:0.4;
+}
+
+.error-msg{
+  text-align:center;padding:10px 0;font-size:13px;color:#CE93D8;
+}
+
+/* ====== 支付弹窗 ====== */
+.pay-overlay{
+  position:absolute;top:0;left:0;right:0;bottom:0;
+  z-index:999;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(4px);
+  padding:32px;
+}
+.pay-card,.pay-loading-card{
+  width:100%;max-width:320px;
+  background:linear-gradient(180deg,rgba(20,8,30,0.98) 0%,rgba(12,5,20,0.98) 100%);
+  border:1px solid rgba(206,147,216,0.12);
+  border-radius:16px;
+  padding:28px 20px 20px;
+  text-align:center;
+  box-shadow:0 8px 40px rgba(0,0,0,0.6);
+}
+.pay-title{
+  font-size:20px;font-weight:800;
+  color:#CE93D8;margin-bottom:4px;
+}
+.pay-amount{
+  font-size:36px;font-weight:900;
+  color:#CE93D8;margin-bottom:4px;
+  text-shadow:0 0 20px rgba(206,147,216,0.2);
+}
+.pay-desc{
+  font-size:13px;color:rgba(206,147,216,0.6);
+  margin-bottom:20px;line-height:1.5;
+}
+.pay-btn{
+  display:block;width:100%;padding:12px 0;
+  border:none;border-radius:10px;
+  font-size:15px;font-weight:700;
+  cursor:pointer;margin-bottom:10px;
+  transition:all 0.12s;letter-spacing:1px;
+}
+.pay-btn:active{transform:translateY(1px);opacity:0.9;}
+.pay-alipay{
+  background:#1677FF;color:#FFFFFF;
+  box-shadow:0 4px 12px rgba(22,119,255,0.3);
+}
+.pay-wechat{
+  background:#07C160;color:#FFFFFF;
+  box-shadow:0 4px 12px rgba(7,193,96,0.3);
+}
+.pay-cancel{
+  background:rgba(206,147,216,0.08);
+  color:rgba(206,147,216,0.6);
+  font-weight:500;
+}
+.pay-loading-card .pay-desc{
+  margin-bottom:0;padding-top:8px;
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="header">
+    <h1>七乐彩</h1>
+    <div class="subtitle">CHINA SEVEN LOTTERY</div>
+  </div>
+
+  <!-- 功能一：机选 -->
+  <div class="section">
+    <div class="section-title">
+      <div class="icon">✦</div>
+      机选号码
+    </div>
+    <div class="rule-link" id="ruleLink">玩法规则</div>
+    <div class="balls-row" id="randomBalls">
+      <div class="ball ball-purple">--</div>
+      <div class="ball ball-purple">--</div>
+      <div class="ball ball-purple">--</div>
+      <div class="ball ball-purple">--</div>
+      <div class="ball ball-purple">--</div>
+      <div class="ball ball-purple">--</div>
+      <div class="ball ball-purple">--</div>
+      <div class="ball-plus">+</div>
+      <div class="ball ball-blue">--</div>
+    </div>
+    <button class="gen-btn" id="genBtn">🎲 机选一注</button>
+    <div class="btn-row">
+      <button class="share-btn" id="shareBtn">📤 分享</button>
+      <button class="share-btn" id="clearBtn">🗑️ 清空</button>
+    </div>
+    <div class="count-text" id="recordCount"></div>
+    <div class="count-text" id="payStatus" style="font-size:12px;margin-top:2px;"></div>
+  </div>
+
+  <!-- 功能二：最近25期 -->
+  <div class="section">
+    <div class="section-title">
+      <div class="icon">✦</div>
+      最近25期
+      <span id="refreshBtn" style="margin-left:auto;font-size:11px;color:rgba(206,147,216,0.4);padding:2px 8px;border:1px solid rgba(255,215,0,0.1);border-radius:6px;cursor:pointer;">刷新</span>
+    </div>
+    <div id="latestPeriods" style="height:165px;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+      <div class="loading-text">正在加载最新开奖数据...</div>
+    </div>
+  </div>
+
+  <!-- 功能三：期号查询 -->
+  <div class="section">
+    <div class="section-title">
+      <div class="icon">✦</div>
+      期号查询
+    </div>
+    <div class="search-row">
+      <input class="search-input" id="periodInput" type="text" placeholder="输入期号，如 2026049" inputmode="numeric">
+      <button class="search-btn" id="searchBtn">查询</button>
+    </div>
+    <div class="search-result" id="searchResult">输入期号后点击查询</div>
+  </div>
+
+  <!-- ====== 支付弹窗 ====== -->
+  <div id="payOverlay" class="pay-overlay" style="display:none;">
+    <div class="pay-card">
+      <div class="pay-title">支付解锁</div>
+      <div class="pay-amount">¥1.00</div>
+      <div class="pay-desc">2次免费机会已用完，支付1元即可永久解锁</div>
+      <button class="pay-btn pay-alipay" onclick="startPay('alipay')">支付宝支付</button>
+      <button class="pay-btn pay-wechat" onclick="startPay('wechat')">微信支付</button>
+      <button class="pay-btn pay-cancel" onclick="closePay()">取消</button>
+    </div>
+  </div>
+  <!-- ====== 支付处理中 ====== -->
+  <div id="payLoading" class="pay-overlay" style="display:none;">
+    <div class="pay-loading-card">
+      <div class="pay-title" id="loadingTitle">支付处理中...</div>
+      <div class="pay-desc" id="loadingDesc">支付宝支付<br>请在外部应用完成支付</div>
+    </div>
+  </div>
+
+  <div class="footer">数据来源 · 中国福利彩票·七乐彩</div>
+
+  <div class="rule-page" id="rulePage">
+    <div class="rule-inner">
+    <div class="rule-header">
+      <div class="rule-title">七乐彩 玩法规则</div>
+      <div class="rule-close" id="ruleClose">✕</div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-subtitle">玩法说明</div>
+      <div class="rule-text">
+        "七乐彩"每注投注号码由 <span class="hl-red">7个号码</span> 组成。<br>
+        号码从 <strong>1—30</strong> 中选择，共选7个号码，无蓝球。<br>
+        每注 <strong>2元</strong>。每周 <strong>一、三、五</strong> 晚开奖。
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-subtitle">奖项设置</div>
+      <table class="rule-table">
+        <tr><th>奖项</th><th>中奖条件</th><th>奖金</th></tr>
+        <tr><td class="prize-1">一等奖</td><td>选7中7</td><td class="prize-1">奖金浮动</td></tr>
+        <tr><td class="prize-2">二等奖</td><td>选7中6+1</td><td class="prize-2">奖金浮动</td></tr>
+        <tr><td class="prize-3">三等奖</td><td>选7中6</td><td class="prize-3">奖金浮动</td></tr>
+        <tr><td class="prize-4">四等奖</td><td>选7中5+1</td><td class="prize-4">200元</td></tr>
+        <tr><td class="prize-5">五等奖</td><td>选7中5</td><td class="prize-5">50元</td></tr>
+        <tr><td class="prize-6">六等奖</td><td>选7中4+1</td><td class="prize-6">10元</td></tr>
+        <tr><td class="prize-7">七等奖</td><td>选7中4</td><td class="prize-7">5元</td></tr>
+      </table>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-subtitle">兑奖规则</div>
+      <div class="rule-text">
+        • 中奖者凭 <strong>有效身份证件</strong> 和 <strong>中奖彩票</strong> 兑奖。<br>
+        • 单注中奖金额 <strong>超过1万元</strong> 需缴纳 <strong>20%</strong> 个人偶然所得税。<br>
+        • 一等奖中奖者须在 <strong>60个自然日内</strong> 到指定地点兑奖。<br>
+        • 二至七等奖在投注站通兑。<br>
+        • 逾期未兑奖视为 <strong>弃奖</strong>，奖金纳入彩票公益金。
+      </div>
+    </div>
+
+    <div class="rule-block">
+      <div class="rule-subtitle">温馨提示</div>
+      <div class="rule-text">
+        <span style="color:rgba(206,147,216,0.5);font-size:12px;">
+        彩票有风险，投注需谨慎。<br>
+        未成年人不得购买彩票及兑奖。<br>
+        理性购彩，量力而行。
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ====== 工具函数 ======
+function genNums(count=7){
+  const nums=new Set();
+  while(nums.size<count)nums.add(Math.floor(Math.random()*30)+1);
+  return [...nums].sort((a,b)=>a-b);
+}
+function genSpecial(){return Math.floor(Math.random()*30)+1;}
+function pad(n){return String(n).padStart(2,'0');}
+
+function getRandomDelay(){return Math.random()*0.12;}
+function getRandomShakeDelay(){return Math.random()*0.08;}
+
+function renderBalls(nums,special,containerId,doShake){
+  const c=document.getElementById(containerId);
+  let html='';
+  nums.forEach((n,i) => {
+    const dly=getRandomDelay();
+    const shakeCls=doShake?' shake':'';
+    html+=`<div class="ball ball-purple${shakeCls}" style="animation-delay:${dly}s">${pad(n)}</div>`;
+  });
+  html+=`<div class="ball-plus">+</div>`;
+  const bdly=getRandomDelay();
+  const bshakeCls=doShake?' shake':'';
+  html+=`<div class="ball ball-blue${bshakeCls}" style="animation-delay:${bdly}s">${pad(blue)}</div>`;
+  c.innerHTML=html;
+}
+
+// ====== 功能一：机选 + 记录 + 支付 ======
+var drawCount = 0;
+
+function saveCurrentDraw(nums, special) {
+  var numStr = nums.map(function(n){return pad(n);}).join(', ');
+  var specialStr = pad(special);
+  if (typeof androidBridge !== 'undefined' && androidBridge.saveDraw) {
+    androidBridge.saveDraw(numStr, '特别号 ' + specialStr);
+    drawCount++;
+    updateRecordCount();
+  }
+}
+
+function updateRecordCount() {
+  var el = document.getElementById('recordCount');
+  if (drawCount > 0) {
+    el.textContent = '已记录 ' + drawCount + ' 注';
+  } else {
+    el.textContent = '已记录 0 注';
+  }
+}
+
+function updatePayStatus() {
+  var el = document.getElementById('payStatus');
+  if (typeof androidBridge === 'undefined') {
+    el.textContent = '';
+    return;
+  }
+  if (androidBridge.isPaid && androidBridge.isPaid()) {
+    el.textContent = '✅ 已永久解锁，无限机选';
+    el.style.color = '#07C160';
+  } else {
+    var remain = androidBridge.getFreeRemain ? androidBridge.getFreeRemain() : 0;
+    if (remain > 0) {
+      el.textContent = '🎁 免费剩余 ' + remain + ' 次';
+      el.style.color = 'rgba(206,147,216,0.5)';
+    } else {
+      el.textContent = '🔒 免费次数已用完，点击机选将弹出支付';
+      el.style.color = '#CE93D8';
+    }
+  }
+}
+
+// ====== 支付弹窗控制 ======
+function showPay() {
+  document.getElementById('payOverlay').style.display = 'flex';
+}
+
+function closePay() {
+  document.getElementById('payOverlay').style.display = 'none';
+}
+
+function startPay(channel) {
+  closePay();
+  document.getElementById('loadingTitle').textContent = '支付处理中...';
+  document.getElementById('loadingDesc').innerHTML = (channel === 'alipay' ? '支付宝' : '微信支付') + '<br>请在外部应用完成支付';
+  document.getElementById('payLoading').style.display = 'flex';
+  if (typeof androidBridge !== 'undefined' && androidBridge.startPay) {
+    androidBridge.startPay(channel);
+  }
+}
+
+function closeLoading() {
+  document.getElementById('payLoading').style.display = 'none';
+}
+
+// 支付成功回调（由Java调用）
+function onPaySuccess() {
+  closeLoading();
+  updatePayStatus();
+  // 支付成功后自动生成一注
+  var nums=genNums(),special=genSpecial();
+  renderBalls(nums,special,'randomBalls',true);
+  saveCurrentDraw(nums, special);
+}
+
+document.getElementById('genBtn').addEventListener('click',function(){
+  // 检查支付逻辑
+  if (typeof androidBridge !== 'undefined') {
+    if (androidBridge.needsPayment && androidBridge.needsPayment()) {
+      showPay();
+      return;
+    }
+    // 有免费次数，消耗一次
+    if (androidBridge.consumeFree && !androidBridge.consumeFree()) {
+      // 没有免费次数但已付费，继续
+    }
+  }
+  var nums=genNums(),special=genSpecial();
+  renderBalls(nums,special,'randomBalls',true);
+  saveCurrentDraw(nums, special);
+  updatePayStatus();
+});
+
+// 启动时
+(function(){
+  if (typeof androidBridge !== 'undefined') {
+    if (androidBridge.clearRecord) {
+      androidBridge.clearRecord();
+    }
+    updatePayStatus();
+  }
+  var nums=genNums(),special=genSpecial();
+  renderBalls(nums,special,'randomBalls',false);
+  saveCurrentDraw(nums, special);
+})();
+
+// ====== 分享功能 ======
+document.getElementById('shareBtn').addEventListener('click',function(){
+  if (drawCount === 0) {
+    document.getElementById('recordCount').textContent = '先摇号，再分享';
+    return;
+  }
+  if (typeof androidBridge !== 'undefined' && androidBridge.shareRecord) {
+    androidBridge.shareRecord();
+  }
+});
+
+// ====== 清空功能 ======
+document.getElementById('clearBtn').addEventListener('click',function(){
+  if (typeof androidBridge !== 'undefined' && androidBridge.clearRecord) {
+    androidBridge.clearRecord();
+  }
+  drawCount = 0;
+  updateRecordCount();
+  updatePayStatus();
+});
+
+// ====== Android Native Bridge API ======
+// androidBridge.fetchLatestDraws(count) -> "code,r1,r2,r3,r4,r5,r6,blue;..."
+// androidBridge.searchDraw(period) -> "code,r1,r2,r3,r4,r5,r6,blue" or "ERROR_*"
+
+function parseDrawData(dataStr){
+  const items=dataStr.split(';').filter(Boolean);
+  const results=[];
+  items.forEach(item=>{
+    const parts=item.split(',');
+    if(parts.length>=9){
+      results.push({
+        code:parts[0],
+        reds:parts.slice(1,8).map(s=>s.trim()),
+        blue:parts[8].trim()
+      });
+    }
+  });
+  // Sort by period descending (latest first)
+  results.sort((a,b)=>parseInt(b.code)-parseInt(a.code));
+  return results;
+}
+
+function renderPeriodRow(item){
+  let bh='';
+  item.reds.forEach(n=>{bh+=`<div class="ball ball-purple">${pad(parseInt(n))}</div>`;});
+  bh+=`<div class="ball-plus">+</div><div class="ball ball-blue">${pad(parseInt(item.blue))}</div>`;
+  return `<div class="period-row"><div class="period-label">${item.code}期</div><div class="period-balls">${bh}</div></div>`;
+}
+
+// ====== 玩法规则页面 ======
+document.getElementById('ruleLink').addEventListener('click',function(){
+  document.getElementById('rulePage').classList.add('show');
+});
+document.getElementById('ruleClose').addEventListener('click',function(){
+  closeRulePage();
+});
+
+// 规则页面滑动关闭（从右向左滑，像微信聊天 → 列表）
+var ruleTouchStartX = 0;
+document.getElementById('rulePage').addEventListener('touchstart',function(e){
+  ruleTouchStartX = e.touches[0].clientX;
+},{passive:true});
+document.getElementById('rulePage').addEventListener('touchmove',function(e){
+  var dx = e.touches[0].clientX - ruleTouchStartX;
+  if (dx < -80) {
+    closeRulePage();
+  }
+},{passive:true});
+
+function closeRulePage(){
+  document.getElementById('rulePage').classList.remove('show');
+}
+
+// ====== 功能二：获取最新25期 ======
+document.getElementById("refreshBtn").addEventListener("click",function(){
+  var el=document.getElementById("latestPeriods");
+  el.innerHTML="<div class=\"loading-text\">正在刷新...</div>";
+  setTimeout(fetchLatestPeriods,100);
+});
+
+function fetchLatestPeriods(){
+  const el=document.getElementById('latestPeriods');
+  try{
+    var result='';
+    if(typeof androidBridge !== 'undefined' && androidBridge.fetchLatestDraws){
+      result=androidBridge.fetchLatestDraws(25);
+    }else{
+      el.innerHTML='<div class="empty-text">Android桥接不可用，请使用真实设备</div>';
+      return;
+    }
+    if(result.startsWith('ERROR')){
+      el.innerHTML='<div class="empty-text">获取数据失败，请检查网络后点击刷新重试</div>';
+      return;
+    }
+    const items=parseDrawData(result);
+    if(items.length===0){
+      el.innerHTML='<div class="empty-text">暂无开奖数据</div>';
+      return;
+    }
+    const showItems=items.slice(0,25);
+    let html='';
+    showItems.forEach(item=>{html+=renderPeriodRow(item);});
+    el.innerHTML=html;
+  }catch(e){
+    el.innerHTML='<div class="empty-text">获取数据失败，请检查网络后点击刷新重试</div>';
+    return;
+  }
+}
+// ====== 功能三：期号查询 ======
+function doSearch(){
+  var input=document.getElementById('periodInput');
+  var resultEl=document.getElementById('searchResult');
+  var period=input.value.trim();
+  if(!period){
+    resultEl.innerHTML='<span style="color:#CE93D8;">请输入期号</span>';
+    return;
+  }
+  // 支持输入5位(26049)或7位(2026049)
+  if(period.length===5)period='20'+period;
+  if(period.length!==7||!/^20\d{5}$/.test(period)){
+    resultEl.innerHTML='<span style="color:#CE93D8;">期号格式错误，请输入如 2026049</span>';
+    return;
+  }
+  resultEl.innerHTML='<span style="color:rgba(206,147,216,0.4);">查询中...</span>';
+  try{
+    var result='';
+    if(typeof androidBridge !== 'undefined' && androidBridge.searchDraw){
+      result=androidBridge.searchDraw(period);
+    }else{
+      resultEl.innerHTML='<span style="color:#CE93D8;">Android桥接不可用</span>';
+      return;
+    }
+    if(result.startsWith('ERROR')){
+      if(result==='ERROR_NOT_FOUND'){
+        resultEl.innerHTML='<span style="color:#CE93D8;">未找到期号 '+period+' 的开奖数据</span>';
+      }else{
+        resultEl.innerHTML='<span style="color:#CE93D8;">查询失败，请检查网络</span>';
+      }
+      return;
+    }
+    var items=parseDrawData(result);
+    if(items.length>0){
+      resultEl.innerHTML=renderPeriodRow(items[0]);
+    }else{
+      resultEl.innerHTML='<span style="color:#CE93D8;">未找到开奖数据</span>';
+    }
+  }catch(e){
+    resultEl.innerHTML='<span style="color:#CE93D8;">查询异常，请重试</span>';
+  }
+}
+
+document.getElementById('searchBtn').addEventListener('click',doSearch);
+document.getElementById('periodInput').addEventListener('keydown',function(e){
+  if(e.key==='Enter')doSearch();
+});
+
+fetchLatestPeriods();
+</script>
+  <!-- 玩法规则页面 (浮层) -->
+  
+</body>
+</html>
