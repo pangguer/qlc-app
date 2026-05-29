@@ -484,7 +484,7 @@ body::before{
       期号查询
     </div>
     <div class="search-row">
-      <input class="search-input" id="periodInput" type="text" placeholder="输入期号，如 2026049" inputmode="numeric">
+      <input class="search-input" id="periodInput" type="text" placeholder="输入期号 如 2026049" inputmode="numeric">
       <button class="search-btn" id="searchBtn">查询</button>
     </div>
     <div class="search-result" id="searchResult">输入期号后点击查询</div>
@@ -510,6 +510,29 @@ body::before{
   </div>
 
   <div class="footer">数据来源 · 中国福利彩票·七乐彩</div>
+
+  
+
+<script>
+// ====== 工具函数 ======
+function genNums(count=7){
+  const nums=new Set();
+  while(nums.size<count)nums.add(Math.floor(Math.random()*30)+1);
+  return [...nums].sort((a,b)=>a-b);
+}
+function genSpecial(){return Math.floor(Math.random()*30)+1;}
+function pad(n){return String(n).padStart(2,'0');}
+
+function getRandomDelay(){return Math.random()*0.12;}
+function getRandomShakeDelay(){return Math.random()*0.08;}
+
+function renderBalls(nums,special,containerId,doShake){
+  const c=document.getElementById(containerId);
+  let html='';
+  nums.forEach((n,i) => {
+    const dly=getRandomDelay();
+    const shakeCls=doShake?' shake':'';
+    html+=`<div class="ball ball-purple${shakeCls}" style="animation-delay:${dly}s">${pad(n)}
 
   <div class="rule-page" id="rulePage">
     <div class="rule-inner">
@@ -564,32 +587,12 @@ body::before{
     </div>
   </div>
 </div>
-
-<script>
-// ====== 工具函数 ======
-function genNums(count=7){
-  const nums=new Set();
-  while(nums.size<count)nums.add(Math.floor(Math.random()*30)+1);
-  return [...nums].sort((a,b)=>a-b);
-}
-function genSpecial(){return Math.floor(Math.random()*30)+1;}
-function pad(n){return String(n).padStart(2,'0');}
-
-function getRandomDelay(){return Math.random()*0.12;}
-function getRandomShakeDelay(){return Math.random()*0.08;}
-
-function renderBalls(nums,special,containerId,doShake){
-  const c=document.getElementById(containerId);
-  let html='';
-  nums.forEach((n,i) => {
-    const dly=getRandomDelay();
-    const shakeCls=doShake?' shake':'';
-    html+=`<div class="ball ball-purple${shakeCls}" style="animation-delay:${dly}s">${pad(n)}</div>`;
+</div>`;
   });
   html+=`<div class="ball-plus">+</div>`;
   const bdly=getRandomDelay();
   const bshakeCls=doShake?' shake':'';
-  html+=`<div class="ball ball-blue${bshakeCls}" style="animation-delay:${bdly}s">${pad(blue)}</div>`;
+  html+=`<div class="ball ball-blue${bshakeCls}" style="animation-delay:${bdly}s">${pad(special)}</div>`;
   c.innerHTML=html;
 }
 

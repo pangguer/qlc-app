@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         public String fetchLatestDraws(int pageSize) {
             try {
                 String content = doHttpRequest(
-                    "https://datachart.500.com/qlc/history/newinc/history.php?start=25001&end=26099"
+                    "https://datachart.500.com/qlc/history/newinc/history.php?start=25001&end=26999"
                 );
 
                 List<String> results = parseQlcRows(content, pageSize);
